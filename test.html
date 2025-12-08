@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>点击画圆并显示滑动轨迹</title>
+  <style>
+    html,body{height:100%;margin:0}
+    body{display:flex;align-items:center;justify-content:center;background:#f7f7f7;font-family:Arial}
+    #app{width:100%;height:100%;position:relative}
+    canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+    .hint{position:absolute;left:12px;top:12px;background:rgba(255,255,255,0.9);padding:8px 10px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.08);font-size:13px}
+    .controls{position:absolute;right:12px;top:12px}
+    button{padding:6px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="hint">点击任意位置会画一个红色 10×10 的小圆。按住并拖动会显示轨迹（支持触摸）。</div>
+    <div class="controls"><button id="clearBtn">清除</button></div>
+    <canvas id="c"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(canvas.clientWidth * dpr);
+      canvas.height = Math.floor(canvas.clientHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // make drawing crisp on high-dpi
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    // helper to get pointer coordinates relative to canvas
+    function getPos(evt) {
+      const rect = canvas.getBoundingClientRect();
+      let clientX, clientY;
+      if (evt.touches && evt.touches[0]) {
+        clientX = evt.touches[0].clientX;
+        clientY = evt.touches[0].clientY;
+      } else if (evt.changedTouches && evt.changedTouches[0]) {
+        clientX = evt.changedTouches[0].clientX;
+        clientY = evt.changedTouches[0].clientY;
+      } else {
+        clientX = evt.clientX;
+        clientY = evt.clientY;
+      }
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    // draw a red 10x10 circle centered at (x,y)
+    function drawClickCircle(x, y) {
+      const size = 10; // width and height in CSS pixels
+      const r = size / 2;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'red';
+      ctx.fill();
+    }
+
+    // draw trail. We'll draw a stroked path and small semi-transparent dots along it
+    function drawTrail(points) {
+      if (points.length < 2) return;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
+      ctx.stroke();
+
+      // dots along trail for clarity
+      for (let p of points) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.fill();
+      }
+    }
+
+    // We will maintain a separate in-memory overlay so clearing/redrawing is easy.
+    let trails = [];
+    let currentTrail = null;
+
+    // redraw full scene from trails and clicks
+    function redraw() {
+      // clear
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // draw all trails
+      for (let t of trails) {
+        drawTrail(t.points);
+      }
+      // draw click circles
+      for (let t of trails) {
+        for (let c of t.clicks) drawClickCircle(c.x, c.y);
+      }
+      // draw current (in-progress) trail on top
+      if (currentTrail) {
+        drawTrail(currentTrail.points);
+      }
+    }
+
+    // pointer handling: support mouse + touch
+    let isDown = false;
+
+    function startPointer(evt) {
+      evt.preventDefault();
+      const pos = getPos(evt);
+      isDown = true;
+      currentTrail = { points: [pos], clicks: [] };
+      // also treat this as a click (user asked: 点击哪儿，就以点击为中心画红色小圆)
+      // But to avoid drawing two circles when dragging, we add a click immediately and let user drag.
+      currentTrail.clicks.push(pos);
+      redraw();
+    }
+
+    function movePointer(evt) {
+      if (!isDown) return;
+      evt.preventDefault();
+      const pos = getPos(evt);
+      currentTrail.points.push(pos);
+      redraw();
+    }
+
+    function endPointer(evt) {
+      if (!isDown) return;
+      evt.preventDefault();
+      // finalize trail
+      // push to trails array
+      trails.push(currentTrail);
+      currentTrail = null;
+      isDown = false;
+      redraw();
+    }
+
+    // Single click (no drag) support: the click event will also fire for mouse; for touch, we already recorded a click in startPointer
+    canvas.addEventListener('click', function(e) {
+      // For mouse click we want to ensure we draw a circle even if user didn't start dragging.
+      // But startPointer already pushed a click for mousedown. To avoid double-clicks, only handle when not dragging.
+      // If the last trail was a simple click with one point, don't duplicate.
+      const pos = getPos(e);
+      // Add a one-off trail that contains only the click (so clicks are preserved)
+      trails.push({ points: [], clicks: [pos] });
+      redraw();
+    });
+
+    // Mouse events
+    canvas.addEventListener('mousedown', startPointer);
+    window.addEventListener('mousemove', movePointer);
+    window.addEventListener('mouseup', endPointer);
+
+    // Touch events
+    canvas.addEventListener('touchstart', startPointer, {passive:false});
+    canvas.addEventListener('touchmove', movePointer, {passive:false});
+    canvas.addEventListener('touchend', endPointer, {passive:false});
+    canvas.addEventListener('touchcancel', endPointer, {passive:false});
+
+    // Clear button
+    clearBtn.addEventListener('click', () => { trails = []; currentTrail = null; redraw(); });
+
+    // initial draw
+    redraw();
+  </script>
+</body>
+</html>
