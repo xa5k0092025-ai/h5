@@ -1,0 +1,56 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "backdrop_path": "https://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280",
+      "id": 215866,
+      "name": "American Primeval",
+      "original_name": "American Primeval",
+      "overview": "A mother and son",
+      "poster_path": "https://gips0.baidu.com/it/u=3602773692,1512483864&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280",
+      "media type": "tv",
+      "adult": false,
+      "original_language": "en",
+      "genre_ids": [137, 18, 107591],
+      "popularity": 182.977,
+      "first_air_date": "2025-01-09",
+      "vote_average": 6.9,
+      "vote_count": 27,
+      "origin_country": ["US"]
+    },
+    {
+      "backdrop_path": "https://gips3.baidu.com/it/u=100751361,1567855012&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280",
+      "id": 215866,
+      "name": "American Primeval2",
+      "original_name": "American Primeval2",
+      "overview": "A mother and son2",
+      "poster_path": "https://gips3.baidu.com/it/u=100751361,1567855012&fm=3028&app=3028&f=JPEG&fmt=auto?w=960&h=1280",
+      "media type": "tv",
+      "adult": false,
+      "original_language": "en",
+      "genre_ids": [137, 18, 107591],
+      "popularity": 182.977,
+      "first_air_date": "2025-01-09",
+      "vote_average": 6.9,
+      "vote_count": 27,
+      "origin_country": ["US"]
+    },
+    {
+      "backdrop_path": "https://gips0.baidu.com/it/u=2946692232,559515331&fm=3028&app=3028&f=JPEG&fmt=auto&q=100&size=f960_1280",
+      "id": 215866,
+      "name": "American Primeval23",
+      "original_name": "American Primeval23",
+      "overview": "A mother and son23",
+      "poster_path": "https://gips0.baidu.com/it/u=2946692232,559515331&fm=3028&app=3028&f=JPEG&fmt=auto&q=100&size=f960_1280",
+      "media type": "tv",
+      "adult": false,
+      "original_language": "en",
+      "genre_ids": [137, 18, 107591],
+      "popularity": 182.977,
+      "first_air_date": "2025-01-09",
+      "vote_average": 6.9,
+      "vote_count": 27,
+      "origin_country": ["US"]
+    }
+  ]
+}
