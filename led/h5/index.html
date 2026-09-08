@@ -1,102 +1,439 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hi LED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Hi LED — A real LED banner in your pocket</title>
+    <meta name="description" content="Hi LED turns your words into a real LED display: neon glow, scrolling text, motion backgrounds, countdown timers, and watermark-free GIF or video export.">
     <link rel="icon" href="../images/logo.png" type="image/png">
     <style>
+        :root {
+            --bg: #04050a;
+            --panel: rgba(10, 14, 28, 0.82);
+            --line: rgba(120, 210, 255, 0.18);
+            --text: #f5f8ff;
+            --muted: rgba(232, 238, 255, 0.68);
+            --cyan: #5ce1ff;
+            --magenta: #ff4fd8;
+            --amber: #ffb347;
+            --lime: #c8ff57;
+            --violet: #7a86ff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        section[id] { scroll-margin-top: 80px; }
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            overflow-x: hidden;
         }
+
+        .atmosphere {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(900px 420px at 12% -10%, rgba(255, 106, 61, 0.18), transparent 55%),
+                radial-gradient(700px 380px at 88% 0%, rgba(92, 225, 255, 0.16), transparent 50%),
+                radial-gradient(800px 480px at 50% 110%, rgba(255, 79, 216, 0.1), transparent 55%),
+                #04050a;
+        }
+        .atmosphere::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1.2px);
+            background-size: 20px 20px;
+            mask-image: linear-gradient(#000 0%, transparent 78%);
+        }
+
+        .wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+
         header {
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: white;
-            padding: 2rem;
-            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            backdrop-filter: blur(18px);
+            background: rgba(4, 5, 10, 0.72);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
-        .logo {
-            width: 120px;
-            height: auto;
-            margin-bottom: 1rem;
-        }
-        .features {
+        .nav {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 2rem;
-            gap: 2rem;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 64px;
+            gap: 16px;
         }
-        .feature-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            width: 300px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .screenshots {
+        .brand {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 2rem;
+            align-items: center;
+            gap: 10px;
+            color: inherit;
+            text-decoration: none;
+            font-weight: 800;
         }
-        .screenshot {
-            width: 200px;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        .brand img {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            box-shadow: 0 0 22px rgba(92, 225, 255, 0.35);
         }
+        .nav a { color: var(--muted); text-decoration: none; font-size: 14px; }
+        .nav-links { display: flex; gap: 22px; }
+        .nav-links a:hover { color: var(--cyan); }
+
+        .hero { padding: 64px 0 28px; text-align: center; }
+        .kicker {
+            display: inline-flex;
+            padding: 6px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: var(--cyan);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-size: 12px;
+            background: rgba(92, 225, 255, 0.07);
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: clamp(34px, 7vw, 72px);
+            line-height: 1.06;
+            letter-spacing: -0.04em;
+            margin-bottom: 16px;
+        }
+        h1 em {
+            font-style: normal;
+            background: linear-gradient(90deg, #ff6a3d, #ffd24a, #7dff73, #5ce1ff, #7a86ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .lead {
+            max-width: 680px;
+            margin: 0 auto 28px;
+            color: var(--muted);
+            font-size: 18px;
+        }
+        .marquee {
+            overflow: hidden;
+            max-width: 740px;
+            margin: 0 auto 36px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: #070914;
+            box-shadow: 0 0 40px rgba(92, 225, 255, 0.12);
+        }
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            gap: 42px;
+            padding: 12px 0;
+            animation: ticker 16s linear infinite;
+            color: var(--cyan);
+            font-weight: 800;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            text-shadow: 0 0 14px rgba(92, 225, 255, 0.75);
+        }
+        @keyframes ticker {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .phones {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            align-items: stretch;
+        }
+        .phone {
+            margin: 0;
+            border-radius: 28px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: #0b1020;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.38);
+        }
+        .phone img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            aspect-ratio: 1260 / 2736;
+        }
+
+        section { padding: 76px 0; }
+        .section-head { text-align: center; margin-bottom: 36px; }
+        .section-head h2 { font-size: clamp(28px, 4vw, 42px); margin-bottom: 10px; }
+        .section-head p { color: var(--muted); }
+
+        .shots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .shot {
+            border-radius: 26px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent);
+        }
+        .shot img { width: 100%; display: block; }
+        .shot figcaption { padding: 14px 14px 16px; color: var(--muted); font-size: 13px; }
+
+        .grid-3, .grid-2 {
+            display: grid;
+            gap: 16px;
+        }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 22px;
+        }
+        .card h3 { margin: 10px 0 8px; font-size: 18px; }
+        .card p { color: var(--muted); font-size: 14px; }
+        .led {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            box-shadow: 0 0 12px currentColor;
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        .split.flip { grid-template-columns: 1.1fr 0.9fr; }
+        .split img {
+            width: min(360px, 100%);
+            margin: 0 auto;
+            display: block;
+            border-radius: 32px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+        }
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+        .chip {
+            font-size: 12px;
+            color: var(--muted);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 6px 10px;
+        }
+
         footer {
-            background-color: #333;
-            color: white;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 28px 0 48px;
             text-align: center;
-            padding: 1rem;
-            margin-top: 2rem;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        footer a { color: var(--cyan); text-decoration: none; }
+
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .phones, .shots, .grid-3, .grid-2, .split, .split.flip { grid-template-columns: 1fr; }
+            .phones, .shots {
+                grid-auto-flow: column;
+                grid-auto-columns: minmax(220px, 74vw);
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                padding-bottom: 6px;
+            }
+            .phone, .shot { scroll-snap-align: start; }
+            .hero { padding-top: 36px; }
+            section { padding: 52px 0; }
         }
     </style>
 </head>
 <body>
+    <div class="atmosphere"></div>
     <header>
-        <img src="../images/logo.png" alt="LED工具Logo" class="logo">
-        <h1>Hi LED</h1>
-        <h2>It's not just LED — it's art in motion.</h2>
-        <p>Bring your messages to life — in lights.</p>
+        <div class="wrap nav">
+            <a class="brand" href="#top">
+                <img src="../images/logo.png" alt="Hi LED">
+                Hi LED
+            </a>
+            <nav class="nav-links">
+                <a href="#preview">Preview</a>
+                <a href="#features">Features</a>
+                <a href="#editor">Banner</a>
+                <a href="#countdown">Countdown</a>
+            </nav>
+        </div>
     </header>
 
-    <section class="screenshots">
-        <img src="../images/app1.png" alt="应用截图1" class="screenshot">
-        <img src="../images/app2.png" alt="应用截图2" class="screenshot">
-        <img src="../images/app3.png" alt="应用截图3" class="screenshot">
-    </section>
+    <main id="top">
+        <section class="hero wrap">
+            <div class="kicker">Real LED Banner</div>
+            <h1>It's not just LED —<br><em>it's art in motion.</em></h1>
+            <p class="lead">Turn welcomes, love notes, promos, and countdowns into a real LED board that scrolls, glows, and breathes. This isn’t a still image — it’s a neon sign in your pocket.</p>
+            <div class="marquee" aria-hidden="true">
+                <div class="marquee-track">
+                    <span>WELCOME</span><span>I LOVE YOU</span><span>SALE 50% OFF</span><span>OPEN 24H</span>
+                    <span>WELCOME</span><span>I LOVE YOU</span><span>SALE 50% OFF</span><span>OPEN 24H</span>
+                </div>
+            </div>
+            <div class="phones">
+                <figure class="phone">
+                    <img src="../images/切片%201.png" alt="Real LED marquee">
+                </figure>
+                <figure class="phone">
+                    <img src="../images/切片%203.png" alt="LED banner editor">
+                </figure>
+                <figure class="phone">
+                    <img src="../images/切片%204.png" alt="Neon countdown timer">
+                </figure>
+            </div>
+        </section>
 
-    <section class="features">
-        <div class="feature-card">
-            <h3>Pro LED Banner</h3>
-            <p>Fully customizable: text, colors, speed, and more.</p>
-        </div>
-        <div class="feature-card">
-            <h3>MotionBackgrounds</h3>
-            <p>Customize your LED experience with stunning effects and real-time controls.</p>
-        </div>
-        <div class="feature-card">
-            <h3>Export GIF and MP4 without watermark</h3>
-            <p>Express more with motion — show GIFs and videos like never before.</p>
-        </div>
-    </section>
+        <section id="preview">
+            <div class="wrap">
+                <div class="section-head">
+                    <h2>See the product in one glance</h2>
+                    <p>From a real LED marquee to motion effects, a full editor, and a neon countdown.</p>
+                </div>
+                <div class="shots">
+                    <figure class="shot">
+                        <img src="../images/切片%201.png" alt="Authentic LED display">
+                        <figcaption>A real LED display — neon, scroll, and live effects</figcaption>
+                    </figure>
+                    <figure class="shot">
+                        <img src="../images/切片%202.png" alt="Delicate motion effects">
+                        <figcaption>Fonts, colors, backgrounds, motion, and music</figcaption>
+                    </figure>
+                    <figure class="shot">
+                        <img src="../images/切片%203.png" alt="Banner editor">
+                        <figcaption>Text, style, and motion — change it, see it live</figcaption>
+                    </figure>
+                    <figure class="shot">
+                        <img src="../images/切片%204.png" alt="Countdown screen">
+                        <figcaption>Countdown, second effects, fullscreen</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
 
-    <section class="screenshots">
-        <img src="../images/guide1.png" alt="应用截图1" class="screenshot">
-        <img src="../images/guide2.png" alt="应用截图2" class="screenshot">
-        <img src="../images/guide3.png" alt="应用截图3" class="screenshot">
-    </section>
+        <section id="features">
+            <div class="wrap">
+                <div class="section-head">
+                    <h2>Built to look like the real thing</h2>
+                    <p>Dots, glow, scroll, and atmosphere — all modeled on an actual LED screen.</p>
+                </div>
+                <div class="grid-3">
+                    <article class="card">
+                        <div class="led" style="color:var(--cyan);background:var(--cyan)"></div>
+                        <h3>Authentic LED dots</h3>
+                        <p>Circles, squares, diamonds, stars, hearts, and more. Dial in density and glow — this isn’t ordinary stylized type.</p>
+                    </article>
+                    <article class="card">
+                        <div class="led" style="color:var(--magenta);background:var(--magenta)"></div>
+                        <h3>Scroll and mirror</h3>
+                        <p>Scroll left, right, pause, or bounce both ways. Flip and rotate it, then hold it up like a live display.</p>
+                    </article>
+                    <article class="card">
+                        <div class="led" style="color:var(--amber);background:var(--amber)"></div>
+                        <h3>Motion backgrounds and effects</h3>
+                        <p>Use photos from your library or ours, then layer stars, meteors, snow, sakura, aurora, and fireworks. Backgrounds can breathe and move.</p>
+                    </article>
+                    <article class="card">
+                        <div class="led" style="color:var(--lime);background:var(--lime)"></div>
+                        <h3>Fonts and color</h3>
+                        <p>Type in English, Chinese, Japanese, Korean, and more. Adjust size and spacing, then switch rainbow gradients, strobe, breathing light, and rainbow borders.</p>
+                    </article>
+                    <article class="card">
+                        <div class="led" style="color:var(--violet);background:var(--violet)"></div>
+                        <h3>Templates and music</h3>
+                        <p>One-tap templates for welcomes, holidays, parties, love notes, sales, and food — plus background music to set the mood.</p>
+                    </article>
+                    <article class="card">
+                        <div class="led" style="color:#ff6a3d;background:#ff6a3d"></div>
+                        <h3>GIF and video export</h3>
+                        <p>Export your banner as a GIF or MP4 and send it on. The lights keep moving even outside the app.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="editor">
+            <div class="wrap split">
+                <img src="../images/切片%203.png" alt="LED banner editor">
+                <div>
+                    <div class="kicker">LED Banner</div>
+                    <h2>Text, style, and motion — all in one place</h2>
+                    <p class="lead" style="margin:16px 0 0;text-align:left">Type a hello, pick a background, turn on motion, add snow or meteors, then set the scroll speed. What you see in preview is the final board — tap play for fullscreen.</p>
+                    <div class="chips">
+                        <span class="chip">Text / Style / Motion / Templates</span>
+                        <span class="chip">Dynamic background</span>
+                        <span class="chip">Brightness and glow</span>
+                        <span class="chip">Fullscreen play</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="wrap split flip">
+                <div>
+                    <div class="kicker">Delicate effect</div>
+                    <h2>Every detail glows</h2>
+                    <p class="lead" style="margin:16px 0 0;text-align:left">Fonts, colors, backgrounds, animation, and music — everything a banner needs is here. English, Chinese, Japanese, and Korean all set in beautiful LED dots.</p>
+                    <div class="chips">
+                        <span class="chip">Multilingual fonts</span>
+                        <span class="chip">Background music</span>
+                        <span class="chip">Particle effects</span>
+                        <span class="chip">Rainbow border</span>
+                    </div>
+                </div>
+                <img src="../images/切片%202.png" alt="Delicate motion effects">
+            </div>
+        </section>
+
+        <section id="countdown">
+            <div class="wrap split">
+                <img src="../images/切片%204.png" alt="Neon countdown">
+                <div>
+                    <div class="kicker">Countdown</div>
+                    <h2>A neon countdown that lights up time</h2>
+                    <p class="lead" style="margin:16px 0 0;text-align:left">Timer or target date, with presets from 1 minute to 1 hour — or set your own. Second effects, vibration, and flashlight alerts. Fullscreen turns it into a countdown board.</p>
+                    <div class="chips">
+                        <span class="chip">Glow / Ripple / Meteor</span>
+                        <span class="chip">Vibration alerts</span>
+                        <span class="chip">Flashlight</span>
+                        <span class="chip">Fullscreen neon</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="wrap grid-2">
+                <article class="card">
+                    <div class="led" style="color:var(--cyan);background:var(--cyan)"></div>
+                    <h3>Take it with you</h3>
+                    <p>Export LED animations as a GIF or video, so sharing with friends isn’t just a screenshot.</p>
+                </article>
+                <article class="card">
+                    <div class="led" style="color:var(--lime);background:var(--lime)"></div>
+                    <h3>Stays on your device</h3>
+                    <p>Photos and banners are processed on-device. Nothing from your camera roll is uploaded.</p>
+                </article>
+            </div>
+        </section>
+    </main>
 
     <footer>
-        <p>eMail: mingzhu58@126.com</p>
+        <div class="wrap">
+            <p>Hi LED · Bring your messages to life — in lights.</p>
+            <p style="margin-top:8px">Email: <a href="mailto:mingzhu58@126.com">mingzhu58@126.com</a></p>
+        </div>
     </footer>
 </body>
 </html>
