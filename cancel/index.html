@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f1ea">
+  <meta name="description" content="How to cancel an iPhone or iPad subscription billed by Apple. Step-by-step instructions for Settings, plus what to do if you cannot find the subscription.">
+  <title>How to Cancel an iOS Subscription</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #1c1915;
+      --muted: #5e574e;
+      --line: #e4ddd2;
+      --card: #fffcf8;
+      --accent: #9a3412;
+      --accent-soft: #f8ebe3;
+      --ok: #14532d;
+      --ok-soft: #e7f3ea;
+      --warn: #7c4a03;
+      --warn-soft: #fff4d6;
+      --shadow: 0 10px 30px rgba(60, 40, 20, 0.06);
+      --radius: 18px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 420px at 50% -80px, #fff7ea 0%, transparent 60%),
+        var(--bg);
+      line-height: 1.5;
+    }
+
+    a { color: var(--accent); }
+
+    .wrap {
+      width: min(640px, 100%);
+      margin: 0 auto;
+      padding: calc(20px + var(--safe-top)) 18px calc(36px + var(--safe-bottom));
+    }
+
+    header h1 {
+      margin: 8px 0 10px;
+      font-size: clamp(1.85rem, 7vw, 2.35rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin: 0;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .lede {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      margin: 0 0 22px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: var(--ink);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    .cta:active { transform: scale(0.99); }
+
+    .path {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 0 0 18px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .path li {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+
+    .path li:not(:last-child)::after {
+      content: "›";
+      margin-left: 2px;
+      color: #a3988c;
+      font-weight: 500;
+    }
+
+    section {
+      margin: 0 0 16px;
+      padding: 18px 16px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    ol.steps {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: step;
+    }
+
+    ol.steps li {
+      position: relative;
+      padding: 14px 0 14px 44px;
+      border-top: 1px solid var(--line);
+    }
+
+    ol.steps li:first-child { border-top: 0; padding-top: 0; }
+
+    ol.steps li::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      display: grid;
+      place-items: center;
+    }
+
+    ol.steps li:first-child::before { top: 0; }
+
+    ol.steps strong { font-weight: 700; }
+
+    .note, .good, .warn {
+      margin-top: 4px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+    }
+
+    .note { background: #f7f3ed; color: var(--muted); }
+    .good { background: var(--ok-soft); color: var(--ok); }
+    .warn { background: var(--warn-soft); color: var(--warn); }
+
+    .note strong, .good strong, .warn strong { color: inherit; }
+
+    details {
+      border-top: 1px solid var(--line);
+      padding: 12px 0;
+    }
+
+    details:first-of-type { border-top: 0; padding-top: 0; }
+    details:last-of-type { padding-bottom: 0; }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      list-style: none;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary::after {
+      content: "+";
+      color: var(--muted);
+      font-weight: 500;
+      flex: 0 0 auto;
+    }
+
+    details[open] summary::after { content: "–"; }
+
+    details p { margin: 8px 0 0; color: var(--muted); }
+
+    footer {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    footer p { margin: 0 0 8px; }
+
+    @media (min-width: 720px) {
+      .wrap { padding-top: 48px; }
+      section { padding: 22px 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <p class="eyebrow">iPhone &amp; iPad</p>
+      <h1>How to cancel an iOS subscription</h1>
+      <p class="lede">Use these steps for Apple Music, iCloud+, and any subscription you bought in the App Store. Deleting the app does not cancel the subscription.</p>
+    </header>
+
+    <a class="cta" href="https://apps.apple.com/account/subscriptions">Open Subscriptions</a>
+
+    <ol class="path" aria-label="Menu path">
+      <li>Settings</li>
+      <li>Your name</li>
+      <li>Subscriptions</li>
+    </ol>
+
+    <section aria-labelledby="steps-title">
+      <h2 id="steps-title">Cancel on your iPhone or iPad</h2>
+      <ol class="steps">
+        <li>Open the <strong>Settings</strong> app.</li>
+        <li>Tap <strong>your name</strong> at the top.</li>
+        <li>Tap <strong>Subscriptions</strong>. Sign in with your Apple Account if asked.</li>
+        <li>Tap the subscription you want to stop.</li>
+        <li>Tap <strong>Cancel Subscription</strong>. You may need to scroll down to see it. If you see <strong>Cancel All Services</strong>, tap that instead.</li>
+        <li>Confirm when asked. The page should show that the subscription will not renew.</li>
+      </ol>
+      <p class="note">If there is no Cancel button, or you see a red expiration message, the subscription is already canceled.</p>
+    </section>
+
+    <section aria-labelledby="after-title">
+      <h2 id="after-title">What happens after you cancel</h2>
+      <p class="good"><strong>You keep access until the end of the current billing period.</strong> Canceling stops the next charge. It does not remove access immediately, and it does not refund a charge that has already been made.</p>
+      <p class="warn"><strong>Free trial:</strong> cancel at least 24 hours before the trial ends if you do not want to be charged.</p>
+    </section>
+
+  </main>
+</body>
+</html>
